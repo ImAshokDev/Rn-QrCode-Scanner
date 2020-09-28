@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-community/async-storage';
 import React, {useState} from 'react';
 import {
   StyleSheet,
@@ -17,7 +18,7 @@ const App = () => {
   const [values, setValues] = useState({
     scan: false,
     scanResult: false,
-    result: '',
+    result: ['hi'],
     linkCheck: '',
   });
 
@@ -50,6 +51,30 @@ const App = () => {
   const openScannerFunc = () => {
     setValues({scan: !values.scan});
     setStatusMsg('');
+  };
+
+  // async set item
+
+  const setAsyncData = async () => {
+    try {
+      const scanData = JSON.stringify(values.result);
+      await AsyncStorage.setItem('scannedData', scanData);
+      console.log(' array setted ');
+    } catch (err) {
+      console.log('set item error', values.result);
+    }
+  };
+
+  // async get item
+
+  const getAsyncData = async () => {
+    try {
+      const getAsyncData = await AsyncStorage.getItem('scannedData');
+      const getScanData = JSON.parse(getAsyncData);
+      console.log('get array ', getScanData);
+    } catch (err) {
+      console.log('set item error');
+    }
   };
 
   return (
@@ -121,6 +146,23 @@ const App = () => {
           </TouchableOpacity>
         </View>
       ) : null}
+
+      <View style={styles.resultView}>
+        <Text style={[styles.text, styles.resultText]}>history</Text>
+
+        <TouchableOpacity
+          activeOpacity={0.4}
+          style={styles.button}
+          onPress={setAsyncData}>
+          <Text style={styles.btnText}>Set Item</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.4}
+          style={styles.button}
+          onPress={getAsyncData}>
+          <Text style={styles.btnText}>get Item</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
