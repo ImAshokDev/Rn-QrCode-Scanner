@@ -18,6 +18,8 @@ target 'rnQrcode' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
+  pod 'RNCMaskedView', :path => '../node_modules/@react-native-community/masked-view'
+
   target 'rnQrcodeTests' do
     inherit! :complete
     # Pods for testing
