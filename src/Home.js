@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ScrollView,
   View,
@@ -16,7 +16,7 @@ import {styles} from './Styles';
 export const Home = () => {
   const [statusMsg, setStatusMsg] = useState('');
   const [historyArray, setHistoryArray] = useState(null);
-  console.log('hittttt', historyArray);
+  // console.log('hittttt', historyArray);
 
   const [values, setValues] = useState({
     scan: false,
@@ -57,42 +57,45 @@ export const Home = () => {
   };
 
   // async set item
+  useEffect(() => {
+    const setAsyncData = async () => {
+      try {
+        const checkGetData = await AsyncStorage.getItem('scannedData');
+        const getAsyncObj = JSON.parse(checkGetData);
+        // console.log(' asyncccc ', getAsyncObj);
 
-  const setAsyncData = async () => {
-    try {
-      const checkGetData = await AsyncStorage.getItem('scannedData');
-      const getAsyncObj = JSON.parse(checkGetData);
-      console.log(' asyncccc ', getAsyncObj);
-
-      if (!checkGetData) {
-        const firstArray = [];
-        firstArray.push(values.result);
-        const scanData = JSON.stringify(firstArray);
-        await AsyncStorage.setItem('scannedData', scanData);
-      } else {
-        getAsyncObj.push(values.result);
-        const scanData = JSON.stringify(getAsyncObj);
-        await AsyncStorage.setItem('scannedData', scanData);
+        if (!checkGetData) {
+          const firstArray = [];
+          firstArray.push(values.result);
+          const scanData = JSON.stringify(firstArray);
+          await AsyncStorage.setItem('scannedData', scanData);
+        } else {
+          getAsyncObj.push(values.result);
+          const scanData = JSON.stringify(getAsyncObj);
+          await AsyncStorage.setItem('scannedData', scanData);
+        }
+      } catch (err) {
+        console.log('set item error', values.result);
       }
-    } catch (err) {
-      console.log('set item error', values.result);
-    }
-  };
+    };
+
+    setAsyncData();
+  }, [values.result]);
 
   // async get item
 
-  const getAsyncData = async () => {
-    // await AsyncStorage.clear();
+  // const getAsyncData = async () => {
+  //   // await AsyncStorage.clear();
 
-    try {
-      const getAsyncData = await AsyncStorage.getItem('scannedData');
-      const getAsyncObj = JSON.parse(getAsyncData);
-      setHistoryArray(getAsyncObj);
-      console.log('get array ', getAsyncObj);
-    } catch (err) {
-      console.log('get item error');
-    }
-  };
+  //   try {
+  //     const getAsyncData = await AsyncStorage.getItem('scannedData');
+  //     const getAsyncObj = JSON.parse(getAsyncData);
+  //     setHistoryArray(getAsyncObj);
+  //     console.log('get array ', getAsyncObj);
+  //   } catch (err) {
+  //     console.log('get item error');
+  //   }
+  // };
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -164,7 +167,7 @@ export const Home = () => {
         </View>
       ) : null}
 
-      <View style={styles.resultView}>
+      {/* <View style={styles.resultView}>
         <Text style={[styles.text, styles.resultText]}>history</Text>
 
         <TouchableOpacity
@@ -179,7 +182,7 @@ export const Home = () => {
           onPress={getAsyncData}>
           <Text style={styles.btnText}>get Item</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </ScrollView>
   );
 };

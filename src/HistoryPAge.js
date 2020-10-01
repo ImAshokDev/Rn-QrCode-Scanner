@@ -15,7 +15,7 @@ export const HistoryPage = () => {
         const getAsyncData = await AsyncStorage.getItem('scannedData');
         const getAsyncObj = JSON.parse(getAsyncData);
         setHistoryArray(getAsyncObj);
-        console.log('get array ', getAsyncData);
+        // console.log('get array ', getAsyncData);
       } catch (err) {
         console.log('get item error');
       }
@@ -24,7 +24,7 @@ export const HistoryPage = () => {
     getAsyncData();
   }, []);
 
-  console.log('get dataaaa', historyArray);
+  //   console.log('get dataaaa', historyArray);
 
   return (
     <View style={styles.container}>
