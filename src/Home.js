@@ -7,21 +7,22 @@ import {
   TouchableOpacity,
   Linking,
   Share,
+  Image,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+
+import scanImg from './Images/scan.jpg';
 
 import {styles} from './Styles';
 
 export const Home = () => {
   const [statusMsg, setStatusMsg] = useState('');
-  const [historyArray, setHistoryArray] = useState(null);
-  // console.log('hittttt', historyArray);
 
   const [values, setValues] = useState({
     scan: false,
     scanResult: false,
-    result: 'data3',
+    result: '',
     linkCheck: '',
   });
 
@@ -62,17 +63,18 @@ export const Home = () => {
       try {
         const checkGetData = await AsyncStorage.getItem('scannedData');
         const getAsyncObj = JSON.parse(checkGetData);
-        // console.log(' asyncccc ', getAsyncObj);
+        if (values.result) {
+          if (!checkGetData) {
+            const firstArray = [];
+            firstArray.push({result: values.result, date: new Date()});
 
-        if (!checkGetData) {
-          const firstArray = [];
-          firstArray.push(values.result);
-          const scanData = JSON.stringify(firstArray);
-          await AsyncStorage.setItem('scannedData', scanData);
-        } else {
-          getAsyncObj.push(values.result);
-          const scanData = JSON.stringify(getAsyncObj);
-          await AsyncStorage.setItem('scannedData', scanData);
+            const scanData = JSON.stringify(firstArray);
+            await AsyncStorage.setItem('scannedData', scanData);
+          } else {
+            getAsyncObj.push({result: values.result, date: new Date()});
+            const scanData = JSON.stringify(getAsyncObj);
+            await AsyncStorage.setItem('scannedData', scanData);
+          }
         }
       } catch (err) {
         console.log('set item error', values.result);
@@ -82,31 +84,25 @@ export const Home = () => {
     setAsyncData();
   }, [values.result]);
 
-  // async get item
-
-  // const getAsyncData = async () => {
-  //   // await AsyncStorage.clear();
-
-  //   try {
-  //     const getAsyncData = await AsyncStorage.getItem('scannedData');
-  //     const getAsyncObj = JSON.parse(getAsyncData);
-  //     setHistoryArray(getAsyncObj);
-  //     console.log('get array ', getAsyncObj);
-  //   } catch (err) {
-  //     console.log('get item error');
-  //   }
-  // };
-
   return (
     <ScrollView style={styles.scrollView}>
       {!values.scan && !values.scanResult ? (
-        <View style={styles.buttonView}>
-          <TouchableOpacity
-            activeOpacity={0.4}
-            style={styles.button}
-            onPress={openScannerFunc}>
-            <Text style={styles.btnText}>Scan QR Code</Text>
-          </TouchableOpacity>
+        <View style={styles.container}>
+          <View style={styles.buttonView}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.btnText}>QR Code Scanner</Text>
+            </TouchableOpacity>
+          </View>
+          <Image source={scanImg} style={styles.scanImg} />
+
+          <View style={styles.buttonView}>
+            <TouchableOpacity
+              activeOpacity={0.4}
+              style={[styles.button, {alignSelf: 'flex-end'}]}
+              onPress={openScannerFunc}>
+              <Text style={styles.btnText}>Scan QR Code</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : null}
 
@@ -166,23 +162,6 @@ export const Home = () => {
           </TouchableOpacity>
         </View>
       ) : null}
-
-      {/* <View style={styles.resultView}>
-        <Text style={[styles.text, styles.resultText]}>history</Text>
-
-        <TouchableOpacity
-          activeOpacity={0.4}
-          style={styles.button}
-          onPress={setAsyncData}>
-          <Text style={styles.btnText}>Set Item</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.4}
-          style={styles.button}
-          onPress={getAsyncData}>
-          <Text style={styles.btnText}>get Item</Text>
-        </TouchableOpacity>
-      </View> */}
     </ScrollView>
   );
 };

@@ -20,6 +20,13 @@ export const styles = StyleSheet.create({
     fontSize: 20,
   },
 
+  scanImg: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
+    marginVertical: 40,
+  },
+
   // qr code scanner view
 
   scanContainer: {
@@ -39,6 +46,7 @@ export const styles = StyleSheet.create({
   resultView: {
     backgroundColor: white,
     padding: 10,
+    marginTop: 100,
   },
   text: {
     color: 'black',

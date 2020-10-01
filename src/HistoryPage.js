@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import React, {useEffect, useState} from 'react';
 import {Text, View, StyleSheet, ScrollView} from 'react-native';
+import moment from 'moment';
 
 import {electroMagnetic, desire, white} from './Color';
 
@@ -9,22 +10,28 @@ export const HistoryPage = () => {
 
   useEffect(() => {
     const getAsyncData = async () => {
-      //   await AsyncStorage.clear();
-
       try {
         const getAsyncData = await AsyncStorage.getItem('scannedData');
         const getAsyncObj = JSON.parse(getAsyncData);
         setHistoryArray(getAsyncObj);
-        // console.log('get array ', getAsyncData);
       } catch (err) {
         console.log('get item error');
       }
     };
 
     getAsyncData();
-  }, []);
+  }, [historyArray]);
 
-  //   console.log('get dataaaa', historyArray);
+  // Clear
+  const clearHistoryFunc = async () => {
+    await AsyncStorage.clear();
+  };
+
+  // date format
+  const dateFormatFunc = (data) => {
+    const formattedDate = moment().format('DD/MM/YYYY');
+    return formattedDate;
+  };
 
   return (
     <View style={styles.container}>
@@ -32,7 +39,9 @@ export const HistoryPage = () => {
         <Text style={[styles.text, {color: white, fontWeight: 'bold'}]}>
           history
         </Text>
-        <Text style={[styles.text, {paddingVertical: 10, fontSize: 16}]}>
+        <Text
+          style={[styles.text, {paddingVertical: 10, fontSize: 16}]}
+          onPress={clearHistoryFunc}>
           Clear History
         </Text>
       </View>
@@ -43,7 +52,8 @@ export const HistoryPage = () => {
           {historyArray ? (
             historyArray.map((obj, index) => (
               <View style={styles.historyCard} key={index}>
-                <Text style={styles.cardText}>data {obj}</Text>
+                <Text style={styles.dateText}>{dateFormatFunc(obj.date)}</Text>
+                <Text style={styles.cardText}>{obj.result}</Text>
               </View>
             ))
           ) : (
@@ -87,8 +97,13 @@ const styles = StyleSheet.create({
   historyCard: {
     padding: 10,
     backgroundColor: white,
-    borderRadius: 10,
+    borderRadius: 6,
     marginBottom: 15,
+  },
+  dateText: {
+    fontSize: 10,
+    color: 'black',
+    alignSelf: 'flex-end',
   },
   cardText: {
     fontSize: 18,

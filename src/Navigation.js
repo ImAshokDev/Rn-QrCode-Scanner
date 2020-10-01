@@ -5,7 +5,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 
 import {Home} from './Home';
-import {HistoryPage} from './HistoryPAge';
+import {HistoryPage} from './HistoryPage';
 
 const Tab = createBottomTabNavigator();
 
